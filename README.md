@@ -36,11 +36,30 @@ extra modifier layer:
 | Shift + Right Alt / AltGr + J | Ů |
 | Right Alt / AltGr + ' | é |
 | Shift + Right Alt / AltGr + ' | É |
+## Tested status
+
+End-to-end tested so far:
+
+```text
+Ubuntu 22.04 / GNOME / X11 / IBus / XKB
+```
+
+The Windows 11 and macOS scripts are separated by OS and are provided as
+best-effort installers, but they have not yet been end-to-end tested on those
+operating systems from this development machine.
+
 ## Quick install
+
 ### Ubuntu / GNOME Linux
 ```bash
 ./install.sh
 ```
+Direct OS-specific script:
+
+```bash
+scripts/ubuntu/install.sh
+```
+
 This installs a native XKB layout named `Czech`, registers it with IBus/GNOME,
 and configures GNOME input sources as:
 ```text
@@ -51,6 +70,12 @@ Czech
 ```bash
 ./install.sh
 ```
+Direct OS-specific script:
+
+```bash
+scripts/macos/install.sh
+```
+
 This installs a native `.keylayout` file into `~/Library/Keyboard Layouts/`.
 You still need to add it in:
 ```text
@@ -64,6 +89,12 @@ Run PowerShell from the repository root:
 Set-ExecutionPolicy -Scope Process Bypass -Force
 .\install.ps1
 ```
+Direct OS-specific script:
+
+```powershell
+.\scripts\windows11\install.ps1
+```
+
 The Windows installer uses AutoHotkey v2 because creating and signing a native
 Windows keyboard-layout DLL/MSKLC installer is not practical from a portable
 script. The script installs or locates AutoHotkey, writes a startup script, and
@@ -74,9 +105,9 @@ runs it for the current user.
 ├── install.sh                         # Linux/macOS dispatcher
 ├── install.ps1                        # Windows dispatcher
 ├── scripts/
-│   ├── ubuntu/install.sh              # Native XKB + IBus + GNOME installer
-│   ├── windows/install.ps1            # Windows 11 AutoHotkey installer
-│   └── macos/install.sh               # macOS .keylayout installer
+│   ├── ubuntu/                        # Ubuntu/GNOME native XKB + IBus scripts
+│   ├── windows11/                     # Windows 11 AutoHotkey scripts
+│   └── macos/                         # macOS .keylayout scripts
 ├── layouts/
 │   └── macos/generate-keylayout.py    # Generates Czech AltGr.keylayout
 └── docs/

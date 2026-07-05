@@ -1,4 +1,14 @@
 # macOS installer
+## Testing note
+
+This macOS script has not been end-to-end tested on macOS from this development
+machine.
+
+The only end-to-end tested installer/environment so far is:
+```text
+Ubuntu 22.04 / GNOME / X11 / IBus / XKB
+```
+
 Run from the repository root:
 ```bash
 ./install.sh

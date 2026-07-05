@@ -4,6 +4,18 @@ Run from PowerShell in the repository root:
 Set-ExecutionPolicy -Scope Process Bypass -Force
 .\install.ps1
 ```
+Or directly:
+```powershell
+.\scripts\windows11\install.ps1
+```
+## Testing note
+This Windows 11 script has **not** been end-to-end tested on Windows 11 from
+this development machine.
+
+The only end-to-end tested installer/environment so far is:
+```text
+Ubuntu 22.04 / GNOME / X11 / IBus / XKB
+```
 ## Implementation
 Windows native keyboard layouts normally require Microsoft Keyboard Layout
 Creator/MSKLC output, compiled DLLs, and installer registration. That is not a
@@ -25,7 +37,7 @@ winget install --id AutoHotkey.AutoHotkey --exact --source winget --accept-packa
 ```
 ## Uninstall
 ```powershell
-.\scripts\windows\uninstall.ps1
+.\scripts\windows11\uninstall.ps1
 ```
 ## Notes
 AutoHotkey represents Windows AltGr as `<^>!`, which means Left Ctrl + Right Alt.

@@ -1,4 +1,11 @@
 # Ubuntu / GNOME installer
+## Tested environment
+
+End-to-end tested on:
+```text
+Ubuntu 22.04 / GNOME / X11 / IBus / XKB
+```
+
 Run from the repository root:
 ```bash
 ./install.sh
