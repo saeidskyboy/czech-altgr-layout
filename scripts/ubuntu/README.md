@@ -12,10 +12,10 @@ Ubuntu 22.04 / GNOME / X11 / IBus / XKB
 
 ## Run
 
-One-command clone and install from the private GitHub repo:
+One-command clone and install from the public GitHub repo:
 
 ```bash
-bash -c 'set -euo pipefail; repo="saeidskyboy/czech-altgr-layout"; dir="${XDG_DATA_HOME:-$HOME/.local/share}/czech-altgr-layout"; if ! command -v gh >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then sudo apt-get update && sudo apt-get install -y git gh; fi; gh auth status --hostname github.com >/dev/null || { echo "Run first: gh auth login --hostname github.com" >&2; exit 1; }; mkdir -p "$(dirname "$dir")"; rm -rf "$dir"; gh repo clone "$repo" "$dir"; cd "$dir"; ./install.sh'
+bash -c 'set -euo pipefail; repo_url="https://github.com/saeidskyboy/czech-altgr-layout.git"; dir="${XDG_DATA_HOME:-$HOME/.local/share}/czech-altgr-layout"; if ! command -v git >/dev/null 2>&1; then sudo apt-get update && sudo apt-get install -y git; fi; mkdir -p "$(dirname "$dir")"; rm -rf "$dir"; git clone "$repo_url" "$dir"; cd "$dir"; ./install.sh'
 ```
 
 From the repository root:

@@ -37,9 +37,9 @@ winget install --id AutoHotkey.AutoHotkey --exact --source winget --accept-packa
 ```
 ## Prerequisites
 
-The one-command bootstrap installs `GitHub CLI` and `Git` with `winget` if they
-are missing. The Windows installer itself installs or locates AutoHotkey v2
-before creating and running the current-user layout script.
+The one-command bootstrap installs `Git` with `winget` if it is missing. The
+Windows installer itself installs or locates AutoHotkey v2 before creating and
+running the current-user layout script.
 
 ## Uninstall
 ```powershell

@@ -14,10 +14,10 @@ Ubuntu 22.04 / GNOME / X11 / IBus / XKB
 
 ## Run
 
-One-command clone and install from the private GitHub repo:
+One-command clone and install from the public GitHub repo:
 
 ```bash
-zsh -c 'set -e; repo="saeidskyboy/czech-altgr-layout"; dir="$HOME/.local/share/czech-altgr-layout"; if ! command -v gh >/dev/null 2>&1; then if command -v brew >/dev/null 2>&1; then brew install gh; else echo "Install GitHub CLI first or install Homebrew: https://brew.sh" >&2; exit 1; fi; fi; gh auth status --hostname github.com >/dev/null || { echo "Run first: gh auth login --hostname github.com" >&2; exit 1; }; mkdir -p "$(dirname "$dir")"; rm -rf "$dir"; gh repo clone "$repo" "$dir"; cd "$dir"; ./install.sh'
+zsh -c 'set -e; repo_url="https://github.com/saeidskyboy/czech-altgr-layout.git"; dir="$HOME/.local/share/czech-altgr-layout"; if ! command -v git >/dev/null 2>&1; then if xcode-select -p >/dev/null 2>&1; then :; else xcode-select --install; echo "Install Command Line Tools, then rerun this command." >&2; exit 1; fi; fi; mkdir -p "$(dirname "$dir")"; rm -rf "$dir"; git clone "$repo_url" "$dir"; cd "$dir"; ./install.sh'
 ```
 
 From the repository root on macOS:
