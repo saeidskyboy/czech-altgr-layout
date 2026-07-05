@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [ "$(uname -s)" != "Darwin" ]; then
+  echo "This installer must be run on macOS." >&2
+  exit 2
+fi
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+GENERATOR="$ROOT_DIR/layouts/macos/generate-keylayout.py"
+LAYOUT_FILE="$ROOT_DIR/layouts/macos/Czech AltGr.keylayout"
+TARGET_DIR="$HOME/Library/Keyboard Layouts"
+TARGET_FILE="$TARGET_DIR/Czech AltGr.keylayout"
+python3 "$GENERATOR" >/dev/null
+mkdir -p "$TARGET_DIR"
+cp "$LAYOUT_FILE" "$TARGET_FILE"
+cat <<DONE
+Installed macOS keyboard layout:
+  $TARGET_FILE
+Next steps:
+1. Log out and log back in if macOS does not show the new layout immediately.
+2. Open System Settings -> Keyboard -> Text Input -> Input Sources.
+3. Add "Czech AltGr".
+4. Switch to it from the macOS input menu.
+Note: macOS .keylayout files map the Option layer generally. This cannot be
+limited to Right Option only using a plain .keylayout file.
+DONE
