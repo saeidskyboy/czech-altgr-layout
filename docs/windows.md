@@ -35,6 +35,12 @@ If AutoHotkey is not installed, the script attempts:
 ```powershell
 winget install --id AutoHotkey.AutoHotkey --exact --source winget --accept-package-agreements --accept-source-agreements
 ```
+## Prerequisites
+
+The one-command bootstrap installs `GitHub CLI` and `Git` with `winget` if they
+are missing. The Windows installer itself installs or locates AutoHotkey v2
+before creating and running the current-user layout script.
+
 ## Uninstall
 ```powershell
 .\scripts\windows11\uninstall.ps1

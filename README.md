@@ -48,6 +48,39 @@ The Windows 11 and macOS scripts are separated by OS and are provided as
 best-effort installers, but they have not yet been end-to-end tested on those
 operating systems from this development machine.
 
+## One-command bootstrap from private GitHub repo
+
+Because this repository is private, the bootstrap commands use GitHub CLI (`gh`).
+Authenticate once first if needed:
+
+```bash
+gh auth login --hostname github.com
+```
+
+### Ubuntu / GNOME Linux one-command install
+
+```bash
+bash -c 'set -euo pipefail; repo="saeidskyboy/czech-altgr-layout"; dir="${XDG_DATA_HOME:-$HOME/.local/share}/czech-altgr-layout"; if ! command -v gh >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then sudo apt-get update && sudo apt-get install -y git gh; fi; gh auth status --hostname github.com >/dev/null || { echo "Run first: gh auth login --hostname github.com" >&2; exit 1; }; mkdir -p "$(dirname "$dir")"; rm -rf "$dir"; gh repo clone "$repo" "$dir"; cd "$dir"; ./install.sh'
+```
+
+### macOS one-command install
+
+```bash
+zsh -c 'set -e; repo="saeidskyboy/czech-altgr-layout"; dir="$HOME/.local/share/czech-altgr-layout"; if ! command -v gh >/dev/null 2>&1; then if command -v brew >/dev/null 2>&1; then brew install gh; else echo "Install GitHub CLI first or install Homebrew: https://brew.sh" >&2; exit 1; fi; fi; gh auth status --hostname github.com >/dev/null || { echo "Run first: gh auth login --hostname github.com" >&2; exit 1; }; mkdir -p "$(dirname "$dir")"; rm -rf "$dir"; gh repo clone "$repo" "$dir"; cd "$dir"; ./install.sh'
+```
+
+### Windows 11 one-command install
+
+Run in PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command '$ErrorActionPreference="Stop"; $repo="saeidskyboy/czech-altgr-layout"; $dir=Join-Path $env:LOCALAPPDATA "czech-altgr-layout"; if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { winget install --id GitHub.cli --exact --source winget --accept-package-agreements --accept-source-agreements; $env:Path += ";" + (Join-Path $env:ProgramFiles "GitHub CLI") }; if (-not (Get-Command git -ErrorAction SilentlyContinue)) { winget install --id Git.Git --exact --source winget --accept-package-agreements --accept-source-agreements; $env:Path += ";" + (Join-Path $env:ProgramFiles "Git\cmd") }; gh auth status --hostname github.com *> $null; if ($LASTEXITCODE -ne 0) { throw "Run first: gh auth login --hostname github.com" }; Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction SilentlyContinue; gh repo clone $repo $dir; Set-Location $dir; .\install.ps1'
+```
+
+After cloning, each OS-specific installer checks its own runtime prerequisites.
+The Ubuntu installer can install missing `apt` packages such as `python3`,
+`x11-xkb-utils`, `ibus`, and `libglib2.0-bin` before continuing.
+
 ## Quick install
 
 ### Ubuntu / GNOME Linux

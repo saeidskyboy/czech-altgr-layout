@@ -27,6 +27,12 @@ Then add it manually in:
 System Settings -> Keyboard -> Text Input -> Input Sources
 ```
 If the layout does not appear immediately, log out and log back in once.
+## Prerequisites
+
+The committed `.keylayout` is used directly. If regeneration is needed and
+`python3` is missing, the installer installs Python with Homebrew when `brew` is
+available; otherwise it asks you to install Python 3 or Homebrew.
+
 ## Limitation
 Plain macOS `.keylayout` files map the general Option layer. They cannot reliably
 restrict the mapping to Right Option only. This means `Option + E` and

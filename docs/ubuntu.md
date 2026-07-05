@@ -30,6 +30,18 @@ It also configures GNOME input sources:
 ```text
 [('xkb', 'us'), ('xkb', 'xr_us_cz_altgr')]
 ```
+## Prerequisites
+
+The installer checks and installs missing Ubuntu packages before continuing:
+
+```text
+python3
+grep
+x11-xkb-utils
+libglib2.0-bin
+ibus
+```
+
 ## Verify only
 ```bash
 scripts/ubuntu/install.sh --verify-only

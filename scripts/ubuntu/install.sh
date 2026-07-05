@@ -33,6 +33,57 @@ done
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || { echo "Missing required command: $1" >&2; exit 1; }
 }
+
+run_root() {
+  if [ "$(id -u)" -eq 0 ]; then
+    "$@"
+  else
+    command -v sudo >/dev/null 2>&1 || {
+      echo "Missing sudo and not running as root; cannot install prerequisites or edit system files." >&2
+      exit 1
+    }
+    sudo "$@"
+  fi
+}
+
+ensure_ubuntu_prereqs() {
+  command -v apt-get >/dev/null 2>&1 || {
+    echo "apt-get was not found. This installer currently supports Ubuntu/Debian-style systems." >&2
+    exit 1
+  }
+
+  local packages=()
+  command -v python3 >/dev/null 2>&1 || packages+=(python3)
+  command -v grep >/dev/null 2>&1 || packages+=(grep)
+  command -v setxkbmap >/dev/null 2>&1 || packages+=(x11-xkb-utils)
+  command -v xkbcomp >/dev/null 2>&1 || packages+=(x11-xkb-utils)
+  command -v gsettings >/dev/null 2>&1 || packages+=(libglib2.0-bin)
+  command -v ibus >/dev/null 2>&1 || packages+=(ibus)
+  command -v ibus-daemon >/dev/null 2>&1 || packages+=(ibus)
+
+  if [ "${#packages[@]}" -eq 0 ]; then
+    return 0
+  fi
+
+  local unique_packages=()
+  local existing pkg seen
+  for pkg in "${packages[@]}"; do
+    seen=0
+    for existing in "${unique_packages[@]}"; do
+      if [ "$existing" = "$pkg" ]; then
+        seen=1
+        break
+      fi
+    done
+    if [ "$seen" -eq 0 ]; then
+      unique_packages+=("$pkg")
+    fi
+  done
+
+  echo "Installing missing prerequisites: ${unique_packages[*]}"
+  run_root env DEBIAN_FRONTEND=noninteractive apt-get update
+  run_root env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${unique_packages[@]}"
+}
 verify() {
   echo "== Verifying ${LAYOUT_NAME} AltGr layout =="
   test -f "$SYMBOLS_FILE" && echo "symbols: OK ($SYMBOLS_FILE)" || echo "symbols: MISSING ($SYMBOLS_FILE)"
@@ -45,7 +96,7 @@ verify() {
   gsettings get org.gnome.desktop.input-sources sources 2>/dev/null || true
   ibus list-engine 2>/dev/null | grep -E "xkb:us::eng|${IBUS_ENGINE}" || true
 }
-require_cmd sudo
+ensure_ubuntu_prereqs
 require_cmd python3
 require_cmd grep
 require_cmd setxkbmap
@@ -65,11 +116,11 @@ fi
 echo "== Installing ${LAYOUT_NAME} AltGr layout on Ubuntu/GNOME =="
 for file in "$SYMBOLS_FILE" "${RULE_FILES[@]}" "$IBUS_SIMPLE_XML"; do
   if [ -e "$file" ]; then
-    sudo cp -a "$file" "${file}.bak.${BACKUP_SUFFIX}"
+    run_root cp -a "$file" "${file}.bak.${BACKUP_SUFFIX}"
   fi
 done
 echo "Writing XKB symbols: $SYMBOLS_FILE"
-sudo tee "$SYMBOLS_FILE" >/dev/null <<'XKBEOF'
+run_root tee "$SYMBOLS_FILE" >/dev/null <<'XKBEOF'
 // Custom English-US-based Czech AltGr layout.
 // Normal keys stay English (US). Right Alt adds Czech letters.
 default partial alphanumeric_keys
@@ -95,23 +146,9 @@ xkb_symbols "basic" {
     key <AC11> { [ apostrophe, quotedbl, eacute, Eacute ] };
 };
 XKBEOF
-layout_block='''
-    <layout>
-      <configItem>
-        <name>xr_us_cz_altgr</name>
-        <shortDescription>cz</shortDescription>
-        <description>Czech</description>
-        <languageList>
-          <iso639Id>ces</iso639Id>
-          <iso639Id>cze</iso639Id>
-          <iso639Id>eng</iso639Id>
-        </languageList>
-      </configItem>
-      <variantList/>
-    </layout>'''
 for file in "${RULE_FILES[@]}"; do
   echo "Ensuring XKB rules registration: $file"
-  sudo python3 - "$file" <<'PY'
+  run_root python3 - "$file" <<'PY'
 from pathlib import Path
 import sys
 path = Path(sys.argv[1])
@@ -142,7 +179,7 @@ print('Registered')
 PY
 done
 echo "Ensuring IBus engine registration: $IBUS_SIMPLE_XML"
-sudo python3 - "$IBUS_SIMPLE_XML" <<'PY'
+run_root python3 - "$IBUS_SIMPLE_XML" <<'PY'
 from pathlib import Path
 import sys
 path = Path(sys.argv[1])

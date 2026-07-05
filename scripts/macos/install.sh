@@ -9,7 +9,40 @@ GENERATOR="$ROOT_DIR/layouts/macos/generate-keylayout.py"
 LAYOUT_FILE="$ROOT_DIR/layouts/macos/Czech AltGr.keylayout"
 TARGET_DIR="$HOME/Library/Keyboard Layouts"
 TARGET_FILE="$TARGET_DIR/Czech AltGr.keylayout"
-python3 "$GENERATOR" >/dev/null
+
+ensure_python3_if_needed() {
+  if command -v python3 >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if [ -f "$LAYOUT_FILE" ]; then
+    return 0
+  fi
+
+  if command -v brew >/dev/null 2>&1; then
+    echo "Python 3 is required to generate the keylayout and is missing. Installing python via Homebrew."
+    brew install python
+    return 0
+  fi
+
+  cat >&2 <<'ERROR'
+Python 3 is required to generate the keylayout, but python3 and Homebrew were not found.
+Install Python 3 or Homebrew, then rerun this script.
+ERROR
+  exit 1
+}
+
+ensure_python3_if_needed
+
+if command -v python3 >/dev/null 2>&1; then
+  python3 "$GENERATOR" >/dev/null
+fi
+
+if [ ! -f "$LAYOUT_FILE" ]; then
+  echo "Missing generated layout file: $LAYOUT_FILE" >&2
+  exit 1
+fi
+
 mkdir -p "$TARGET_DIR"
 cp "$LAYOUT_FILE" "$TARGET_FILE"
 cat <<DONE
